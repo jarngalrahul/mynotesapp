@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "37572945457",
+    "project_id": "perxl-mynotes-app",
+    "storage_bucket": "perxl-mynotes-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37572945457:android:eb4cee1d0177671841d710",
+        "android_client_info": {
+          "package_name": "com.perxl.mynotesapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlqK5coH-hr8zYpCudndDeKUW6B9tuE4E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
