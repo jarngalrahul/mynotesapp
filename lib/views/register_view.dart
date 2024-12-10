@@ -94,3 +94,6 @@ class _RegisterViewState extends State<RegisterView> {
         ));
   }
 }
+
+
+//need to add create new ssh key and then we will add it to the github and only then we  can modify the repository for the current project
