@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotesapp/firebase_options.dart';
+import 'package:mynotesapp/views/login_view.dart';
+import 'package:mynotesapp/views/register_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +22,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(),
+      routes: {
+        '/login/': (context) => const LoginView(),
+        '/register/': (context) => const RegisterView(),
+      },
     );
   }
 }
@@ -29,36 +35,20 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Home'),
-          backgroundColor: const Color.fromARGB(255, 45, 105, 154),
-          foregroundColor: Colors.white,
-          shadowColor: Colors.amber,
-        ),
-        body: FutureBuilder(
-          future: Firebase.initializeApp(
-            options: DefaultFirebaseOptions.currentPlatform,
-          ),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                final User? user = FirebaseAuth.instance.currentUser;
-                if (user != null) {
-                  if (user.emailVerified) {
-                    debugPrint("Email verified");
-                  } else {
-                    debugPrint("Email not verified");
-                  }
-                  debugPrint(user.toString());
-                } else {
-                  debugPrint("User is null");
-                }
-                return const Text('Done');
-              default:
-                return const Text("Loading");
-            }
-          },
-        ));
+    return FutureBuilder(
+      future: Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      ),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            return const LoginView();
+          default:
+            return const CircularProgressIndicator();
+        }
+      },
+    );
   }
 }
+
+

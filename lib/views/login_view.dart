@@ -85,7 +85,19 @@ class _LoginViewState extends State<LoginView> {
                         child: const Text(
                           "Log In",
                           style: TextStyle(color: Colors.white),
-                        ))
+                        )),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/register/', (route) => false);
+                        },
+                        style: const ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll(
+                                Color.fromARGB(255, 45, 105, 154))),
+                        child: const Text(
+                          'Not registered yet? Register here',
+                          style: TextStyle(color: Colors.white),
+                        )),
                   ],
                 );
               default:

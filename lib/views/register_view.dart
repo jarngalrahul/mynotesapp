@@ -84,6 +84,16 @@ class _RegisterViewState extends State<RegisterView> {
                             backgroundColor: WidgetStatePropertyAll(
                                 Color.fromARGB(255, 45, 105, 154))),
                         child: const Text("Register",
+                            style: TextStyle(color: Colors.white))),
+                    TextButton(
+                        onPressed: () async {
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/login/', (route) => false);
+                        },
+                        style: const ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll(
+                                Color.fromARGB(255, 45, 105, 154))),
+                        child: const Text("Already registered? Login here!",
                             style: TextStyle(color: Colors.white)))
                   ],
                 );
