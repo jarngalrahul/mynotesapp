@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mynotesapp/firebase_options.dart';
 import 'package:mynotesapp/views/login_view.dart';
 import 'package:mynotesapp/views/register_view.dart';
+import 'package:mynotesapp/views/verify_email_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +43,17 @@ class HomePage extends StatelessWidget {
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
-            return const LoginView();
+            final User? user = FirebaseAuth.instance.currentUser;
+            if (user != null) {
+              if (user.emailVerified) {
+                print("Email verified");
+              } else {
+                return const VerifyEmainView();
+              }
+            } else {
+              return const LoginView();
+            }
+            return const Text("Done");
           default:
             return const CircularProgressIndicator();
         }
@@ -50,5 +61,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-
