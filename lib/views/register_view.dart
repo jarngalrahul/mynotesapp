@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotesapp/firebase_options.dart';
+import 'dart:developer' as devtools show log;
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -69,15 +70,15 @@ class _RegisterViewState extends State<RegisterView> {
                             final credential = FirebaseAuth.instance
                                 .signInWithEmailAndPassword(
                                     email: email, password: password);
-                            debugPrint("$credential");
+                            devtools.log("$credential");
                           } on FirebaseAuthException catch (e) {
                             if (e.code == 'user-not-found') {
-                              debugPrint("user not found");
+                              devtools.log("user not found");
                             } else {
-                              debugPrint(e.code.toString());
+                              devtools.log(e.code.toString());
                             }
                           } catch (e) {
-                            debugPrint("An error occured: $e");
+                            devtools.log("An error occured: $e");
                           }
                         },
                         style: const ButtonStyle(

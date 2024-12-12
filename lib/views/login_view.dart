@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotesapp/firebase_options.dart';
+import 'dart:developer' as devtools show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -51,7 +52,8 @@ class _LoginViewState extends State<LoginView> {
                       keyboardType: TextInputType.emailAddress,
                       enableSuggestions: true,
                       decoration: const InputDecoration(
-                          hintText: "Enter your email here"),
+                        hintText: "Enter your email here",
+                      ),
                     ),
                     TextField(
                       controller: _password,
@@ -59,45 +61,60 @@ class _LoginViewState extends State<LoginView> {
                       enableSuggestions: false,
                       autocorrect: false,
                       decoration: const InputDecoration(
-                          hintText: "Enter your password here"),
+                        hintText: "Enter your password here",
+                      ),
                     ),
                     TextButton(
-                        onPressed: () async {
-                          final email = _email.text;
-                          final password = _password.text;
-                          debugPrint("$email - $password");
-                          try {
-                            final credential = FirebaseAuth.instance
-                                .signInWithEmailAndPassword(
-                                    email: email, password: password);
-                            debugPrint("$credential");
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'user-not-found') {
-                              debugPrint("user not found");
-                            }
-                          } catch (e) {
-                            debugPrint("An error occured: $e");
-                          }
-                        },
-                        style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                                Color.fromARGB(255, 45, 105, 154))),
-                        child: const Text(
-                          "Log In",
-                          style: TextStyle(color: Colors.white),
-                        )),
-                    TextButton(
-                        onPressed: () {
+                      onPressed: () async {
+                        final email = _email.text;
+                        final password = _password.text;
+                        
+                        try {
+                          final credential =
+                              FirebaseAuth.instance.signInWithEmailAndPassword(
+                            email: email,
+                            password: password,
+                          );
+                          devtools.log(credential.toString());
                           Navigator.of(context).pushNamedAndRemoveUntil(
-                              '/register/', (route) => false);
-                        },
-                        style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                                Color.fromARGB(255, 45, 105, 154))),
-                        child: const Text(
-                          'Not registered yet? Register here',
-                          style: TextStyle(color: Colors.white),
-                        )),
+                            '/notes/',
+                            (route) => false,
+                          );
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'user-not-found') {
+                            devtools.log("user not found");
+                          } else if (e.code == 'wrong-password') {
+                            devtools.log('Wrong password');
+                          }
+                        } catch (e) {
+                          devtools.log("An error occured: $e");
+                        }
+                      },
+                      style: const ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                              Color.fromARGB(255, 45, 105, 154))),
+                      child: const Text(
+                        "Log In",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/register/',
+                          (route) => false,
+                        );
+                      },
+                      style: const ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Color.fromARGB(255, 45, 105, 154),
+                        ),
+                      ),
+                      child: const Text(
+                        'Not registered yet? Register here',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ],
                 );
               default:
