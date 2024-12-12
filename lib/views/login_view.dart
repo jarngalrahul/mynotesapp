@@ -1,9 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotesapp/constants/routes.dart';
 import 'package:mynotesapp/firebase_options.dart';
 import 'dart:developer' as devtools show log;
+
+import 'package:mynotesapp/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -69,26 +73,30 @@ class _LoginViewState extends State<LoginView> {
                       onPressed: () async {
                         final email = _email.text;
                         final password = _password.text;
-                        
+
                         try {
-                          final credential =
-                              FirebaseAuth.instance.signInWithEmailAndPassword(
+                          var credentials = await FirebaseAuth.instance
+                              .signInWithEmailAndPassword(
                             email: email,
                             password: password,
                           );
-                          devtools.log(credential.toString());
+                          devtools.log(credentials.toString());
                           Navigator.of(context).pushNamedAndRemoveUntil(
                             notesRoute,
                             (route) => false,
                           );
                         } on FirebaseAuthException catch (e) {
-                          if (e.code == 'user-not-found') {
-                            devtools.log("user not found");
-                          } else if (e.code == 'wrong-password') {
-                            devtools.log('Wrong password');
-                          }
+                          devtools.log(e.message.toString());
+                          await showErrorDialog(
+                            context,
+                            'Error ${e.code}',
+                          );
                         } catch (e) {
                           devtools.log("An error occured: $e");
+                          await showErrorDialog(
+                            context,
+                            'Error ${e.toString()}',
+                          );
                         }
                       },
                       style: const ButtonStyle(
