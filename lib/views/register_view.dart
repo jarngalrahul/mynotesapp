@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mynotesapp/constants/routes.dart';
 import 'package:mynotesapp/firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
@@ -52,7 +53,8 @@ class _RegisterViewState extends State<RegisterView> {
                       keyboardType: TextInputType.emailAddress,
                       enableSuggestions: true,
                       decoration: const InputDecoration(
-                          hintText: "Enter your email here"),
+                        hintText: "Enter your email here",
+                      ),
                     ),
                     TextField(
                       controller: _password,
@@ -60,42 +62,57 @@ class _RegisterViewState extends State<RegisterView> {
                       enableSuggestions: false,
                       autocorrect: false,
                       decoration: const InputDecoration(
-                          hintText: "Enter your password here"),
+                        hintText: "Enter your password here",
+                      ),
                     ),
                     TextButton(
-                        onPressed: () async {
-                          final email = _email.text;
-                          final password = _password.text;
-                          try {
-                            final credential = FirebaseAuth.instance
-                                .signInWithEmailAndPassword(
-                                    email: email, password: password);
-                            devtools.log("$credential");
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'user-not-found') {
-                              devtools.log("user not found");
-                            } else {
-                              devtools.log(e.code.toString());
-                            }
-                          } catch (e) {
-                            devtools.log("An error occured: $e");
+                      onPressed: () async {
+                        final email = _email.text;
+                        final password = _password.text;
+                        try {
+                          final credential = FirebaseAuth.instance
+                              .signInWithEmailAndPassword(
+                                  email: email, password: password);
+                          devtools.log("$credential");
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'user-not-found') {
+                            devtools.log("user not found");
+                          } else {
+                            devtools.log(e.code.toString());
                           }
-                        },
-                        style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                                Color.fromARGB(255, 45, 105, 154))),
-                        child: const Text("Register",
-                            style: TextStyle(color: Colors.white))),
+                        } catch (e) {
+                          devtools.log("An error occured: $e");
+                        }
+                      },
+                      style: const ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Color.fromARGB(255, 45, 105, 154),
+                        ),
+                      ),
+                      child: const Text(
+                        "Register",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                     TextButton(
-                        onPressed: () async {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              '/login/', (route) => false);
-                        },
-                        style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                                Color.fromARGB(255, 45, 105, 154))),
-                        child: const Text("Already registered? Login here!",
-                            style: TextStyle(color: Colors.white)))
+                      onPressed: () async {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          loginRoute,
+                          (route) => false,
+                        );
+                      },
+                      style: const ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Color.fromARGB(255, 45, 105, 154),
+                        ),
+                      ),
+                      child: const Text(
+                        "Already registered? Login here!",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
                   ],
                 );
               default:
