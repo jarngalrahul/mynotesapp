@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotesapp/constants/routes.dart';
+import 'package:mynotesapp/services/auth/auth_service.dart';
 
 class VerifyEmainView extends StatefulWidget {
   const VerifyEmainView({super.key});
@@ -28,8 +28,7 @@ class _VerifyEmainViewState extends State<VerifyEmainView> {
               "If you haven't receieved email yet, click 'Send verification email' button below."),
           TextButton(
             onPressed: () async {
-              final User? user = FirebaseAuth.instance.currentUser;
-              await user?.sendEmailVerification();
+              await AuthService.firebase().sendEmailVerification();
             },
             style: const ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(
@@ -45,7 +44,7 @@ class _VerifyEmainViewState extends State<VerifyEmainView> {
           ),
           TextButton(
             onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+              await AuthService.firebase().logOut();
               if (!context.mounted) return;
               Navigator.of(context).pushNamedAndRemoveUntil(
                 registerRoute,
