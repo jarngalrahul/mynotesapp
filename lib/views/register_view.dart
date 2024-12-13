@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mynotesapp/constants/routes.dart';
-import 'package:mynotesapp/firebase_options.dart';
 import 'package:mynotesapp/services/auth/auth_exceptions.dart';
 import 'package:mynotesapp/services/auth/auth_service.dart';
-import 'package:mynotesapp/services/auth/auth_user.dart';
-import 'dart:developer' as devtools show log;
-
 import 'package:mynotesapp/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
@@ -126,5 +122,3 @@ class _RegisterViewState extends State<RegisterView> {
   }
 }
 
-
-//need to add create new ssh key and then we will add it to the github and only then we  can modify the repository for the current project
