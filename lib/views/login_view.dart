@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -75,16 +73,25 @@ class _LoginViewState extends State<LoginView> {
                         final password = _password.text;
 
                         try {
-                          var credentials = await FirebaseAuth.instance
+                          await FirebaseAuth.instance
                               .signInWithEmailAndPassword(
                             email: email,
                             password: password,
                           );
-                          devtools.log(credentials.toString());
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            notesRoute,
-                            (route) => false,
-                          );
+                          final User? user = FirebaseAuth.instance.currentUser;
+                          devtools.log(user.toString());
+                          if (!context.mounted) return;
+                          if (user?.emailVerified ?? false) {
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              notesRoute,
+                              (route) => false,
+                            );
+                          } else {
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              verifyEmailRoute,
+                              (route) => false,
+                            );
+                          }
                         } on FirebaseAuthException catch (e) {
                           devtools.log(e.message.toString());
                           await showErrorDialog(
