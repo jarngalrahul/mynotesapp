@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:mynotesapp/services/auth/auth_exceptions.dart';
 import 'package:mynotesapp/services/auth/auth_provider.dart';
