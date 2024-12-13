@@ -5,6 +5,8 @@ import 'package:mynotesapp/constants/routes.dart';
 import 'package:mynotesapp/firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
+import 'package:mynotesapp/utilities/show_error_dialog.dart';
+
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
@@ -70,18 +72,45 @@ class _RegisterViewState extends State<RegisterView> {
                         final email = _email.text;
                         final password = _password.text;
                         try {
-                          final credential = FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                                  email: email, password: password);
+                          final UserCredential credential = await FirebaseAuth
+                              .instance
+                              .createUserWithEmailAndPassword(
+                            email: email,
+                            password: password,
+                          );
                           devtools.log("$credential");
+                          final User? user = FirebaseAuth.instance.currentUser;
+                          await user?.sendEmailVerification();
+                          if (!context.mounted) return;
+                          Navigator.of(context).pushNamed(
+                            verifyEmailRoute,
+                          );
                         } on FirebaseAuthException catch (e) {
-                          if (e.code == 'user-not-found') {
-                            devtools.log("user not found");
+                          devtools.log('An error occured: ${e.code}');
+                          if (!context.mounted) return;
+                          if (e.code == 'weak-password') {
+                            await showErrorDialog(
+                              context,
+                              'Weak password',
+                            );
+                          } else if (e.code == 'invalid-email') {
+                            await showErrorDialog(
+                              context,
+                              'invalid-email',
+                            );
                           } else {
-                            devtools.log(e.code.toString());
+                            await showErrorDialog(
+                              context,
+                              'An error occured: ${e.code}',
+                            );
                           }
                         } catch (e) {
                           devtools.log("An error occured: $e");
+                          if (!context.mounted) return;
+                          await showErrorDialog(
+                            context,
+                            'An error occured: $e',
+                          );
                         }
                       },
                       style: const ButtonStyle(
