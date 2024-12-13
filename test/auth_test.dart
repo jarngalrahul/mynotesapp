@@ -1,4 +1,3 @@
-
 import 'package:mynotesapp/services/auth/auth_exceptions.dart';
 import 'package:mynotesapp/services/auth/auth_provider.dart';
 import 'package:mynotesapp/services/auth/auth_user.dart';
@@ -61,7 +60,7 @@ void main() {
       expect(user!.isEmailVerified, true);
     });
 
-    test('Should be able to logout and login again', () async{
+    test('Should be able to logout and login again', () async {
       await provider.logOut();
       await provider.logIn(email: 'email', password: 'password');
 
@@ -106,7 +105,7 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotInitializedException();
     if (email == 'foo@bar.com') throw InvalidCredentialAuthException();
     if (password == 'foobar') throw WrongPasswordAuthException();
-    const user = AuthUser(isEmailVerified: false);
+    const user = AuthUser(email: 'email@foobar.com', isEmailVerified: false);
     _user = user;
     return Future.value(user);
   }
@@ -124,7 +123,7 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotInitializedException();
     final user = _user;
     if (user == null) throw InvalidCredentialAuthException();
-    const newUser = AuthUser(isEmailVerified: true);
+    const newUser = AuthUser(email: 'email@foobar.com', isEmailVerified: true);
     _user = newUser;
   }
 }
