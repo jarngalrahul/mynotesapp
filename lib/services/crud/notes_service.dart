@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:mynotesapp/services/crud/crud_exceptions.dart';
 import 'package:sqflite/sqflite.dart';
@@ -14,11 +13,17 @@ class NotesService {
 
   //Creating a singleton instance of noteservice so that it is not initialized repeatedly
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
-  factory NotesService() => _shared;
+  NotesService._sharedInstance() {
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      },
+      
+    );
+  }
 
-  final StreamController<List<DatabaseNote>> _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  factory NotesService() => _shared;
+  late final StreamController<List<DatabaseNote>> _notesStreamController ;      
 
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
 
