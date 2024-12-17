@@ -27,7 +27,6 @@ Future<T?> showGenericDialog<T>(
           );
         }).toList(),
       );
-      ;
     },
   );
 }

@@ -15,7 +15,7 @@ class NotesView extends StatefulWidget {
 
 class _NotesViewState extends State<NotesView> {
   //If the view reached here then there definately must be an verified email present.
-  String get userEmail => AuthService.firebase().currentUser!.email!;
+  String get userEmail => AuthService.firebase().currentUser!.email;
   late final NotesService _notesService;
 
   @override
