@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mynotesapp/services/auth/auth_service.dart';
 import 'package:mynotesapp/services/cloud/cloud_note.dart';
 import 'package:mynotesapp/services/cloud/firebase_cloud_storage.dart';
+import 'package:mynotesapp/utilities/dialogs/cannot_share_empty_dialog.dart';
 import 'package:mynotesapp/utilities/generics/get_arguments.dart';
+import 'package:share_plus/share_plus.dart';
 
 //Uncomment to use local storage
 //import 'package:mynotesapp/services/crud/notes_service.dart';
@@ -22,7 +24,8 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
 
   Future<CloudNote> createOrGetExistingNote(BuildContext context) async {
     //If the note exist before we edit it.
-    final CloudNote? widgetNote = context.getArgument<CloudNote>();
+    final CloudNote? widgetNote =
+        context.getArgument<CloudNote>() as CloudNote?;
     if (widgetNote != null) {
       _note = widgetNote;
       _textController.text = widgetNote.text;
@@ -95,6 +98,19 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
         title: const Text('New Note'),
         backgroundColor: const Color.fromARGB(255, 45, 105, 154),
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final text = _textController.text;
+              if (_note == null || text.isEmpty) {
+                await showCannotShareEmptyNoteDialog(context);
+              } else {
+                Share.share(text);
+              }
+            },
+            icon: const Icon(Icons.share),
+          )
+        ],
       ),
       body: FutureBuilder(
         future: createOrGetExistingNote(context),
