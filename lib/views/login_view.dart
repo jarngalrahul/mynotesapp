@@ -4,6 +4,7 @@ import 'package:mynotesapp/constants/routes.dart';
 import 'package:mynotesapp/services/auth/auth_exceptions.dart';
 import 'package:mynotesapp/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotesapp/services/auth/bloc/auth_event.dart';
+import 'package:mynotesapp/services/auth/bloc/auth_state.dart';
 import 'package:mynotesapp/utilities/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -59,34 +60,32 @@ class _LoginViewState extends State<LoginView> {
               hintText: "Enter your password here",
             ),
           ),
-          TextButton(
-            onPressed: () async {
-              final email = _email.text;
-              final password = _password.text;
-
-              try {
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) async {
+              if (state is AuthStateLoggedOut) {
+                if (state.exception is InvalidCredentialAuthException) {
+                  await showErrorDialog(context, 'Invalid Credentials');
+                } else if (state.exception is GenericAuthException) {
+                  await showErrorDialog(context, 'Authentication Error');
+                }
+              }
+            },
+            child: TextButton(
+              onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
                 context.read<AuthBloc>().add(AuthEventLogIn(
                       email,
                       password,
                     ));
-              } on InvalidCredentialAuthException {
-                await showErrorDialog(
-                  context,
-                  'Invalid credentials. Check you email/password.',
-                );
-              } on GenericAuthException {
-                await showErrorDialog(
-                  context,
-                  'Authentication Error',
-                );
-              }
-            },
-            style: const ButtonStyle(
-                backgroundColor:
-                    WidgetStatePropertyAll(Color.fromARGB(255, 45, 105, 154))),
-            child: const Text(
-              "Log In",
-              style: TextStyle(color: Colors.white),
+              },
+              style: const ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(
+                      Color.fromARGB(255, 45, 105, 154))),
+              child: const Text(
+                "Log In",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
           TextButton(
