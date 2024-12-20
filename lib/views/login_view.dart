@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotesapp/constants/routes.dart';
 import 'package:mynotesapp/services/auth/auth_exceptions.dart';
-import 'package:mynotesapp/services/auth/auth_service.dart';
-import 'package:mynotesapp/services/auth/auth_user.dart';
+import 'package:mynotesapp/services/auth/bloc/auth_bloc.dart';
+import 'package:mynotesapp/services/auth/bloc/auth_event.dart';
 import 'package:mynotesapp/utilities/dialogs/error_dialog.dart';
-import 'dart:developer' as devtools show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -65,24 +65,10 @@ class _LoginViewState extends State<LoginView> {
               final password = _password.text;
 
               try {
-                await AuthService.firebase().logIn(
-                  email: email,
-                  password: password,
-                );
-                final AuthUser? user = AuthService.firebase().currentUser;
-                devtools.log(user.toString());
-                if (!context.mounted) return;
-                if (user?.isEmailVerified ?? false) {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    notesRoute,
-                    (route) => false,
-                  );
-                } else {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    verifyEmailRoute,
-                    (route) => false,
-                  );
-                }
+                context.read<AuthBloc>().add(AuthEventLogIn(
+                      email,
+                      password,
+                    ));
               } on InvalidCredentialAuthException {
                 await showErrorDialog(
                   context,
