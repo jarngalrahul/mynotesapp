@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mynotesapp/constants/routes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotesapp/services/auth/auth_exceptions.dart';
-import 'package:mynotesapp/services/auth/auth_service.dart';
+import 'package:mynotesapp/services/auth/bloc/auth_bloc.dart';
+import 'package:mynotesapp/services/auth/bloc/auth_event.dart';
+import 'package:mynotesapp/services/auth/bloc/auth_state.dart';
 import 'package:mynotesapp/utilities/dialogs/error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
@@ -31,94 +33,80 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Register'),
-          backgroundColor: const Color.fromARGB(255, 45, 105, 154),
-          foregroundColor: Colors.white,
-          shadowColor: Colors.amber,
-        ),
-        body: Column(
-          children: [
-            TextField(
-              controller: _email,
-              keyboardType: TextInputType.emailAddress,
-              enableSuggestions: true,
-              decoration: const InputDecoration(
-                hintText: "Enter your email here",
-              ),
-            ),
-            TextField(
-              controller: _password,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: const InputDecoration(
-                hintText: "Enter your password here",
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
-                try {
-                  await AuthService.firebase().createUser(
-                    email: email,
-                    password: password,
-                  );
-                  AuthService.firebase().sendEmailVerification();
-
-                  if (!context.mounted) return;
-                  Navigator.of(context).pushNamed(verifyEmailRoute);
-                } on WeakPasswordAuthException {
-                  await showErrorDialog(
-                    context,
-                    'Weak Password',
-                  );
-                } on InvalidEmailAuthException {
-                  await showErrorDialog(
-                    context,
-                    'Invalid Email.',
-                  );
-                } on GenericAuthException {
-                  await showErrorDialog(
-                    context,
-                    'Failed to register',
-                  );
-                } 
-                
-              },
-              style: const ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(
-                  Color.fromARGB(255, 45, 105, 154),
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) async {
+        if (state is AuthStateRegistering) {
+          if (state.exception is WeakPasswordAuthException) {
+            await showErrorDialog(context, 'Weak Password');
+          } else if (state.exception is InvalidEmailAuthException) {
+            await showErrorDialog(context, 'Invalid Email');
+          } else if (state.exception is GenericAuthException) {
+            await showErrorDialog(context, 'Failed to register');
+          }
+        }
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Register'),
+            backgroundColor: const Color.fromARGB(255, 45, 105, 154),
+            foregroundColor: Colors.white,
+            shadowColor: Colors.amber,
+          ),
+          body: Column(
+            children: [
+              TextField(
+                controller: _email,
+                keyboardType: TextInputType.emailAddress,
+                enableSuggestions: true,
+                decoration: const InputDecoration(
+                  hintText: "Enter your email here",
                 ),
               ),
-              child: const Text(
-                "Register",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  loginRoute,
-                  (route) => false,
-                );
-              },
-              style: const ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(
-                  Color.fromARGB(255, 45, 105, 154),
+              TextField(
+                controller: _password,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration: const InputDecoration(
+                  hintText: "Enter your password here",
                 ),
               ),
-              child: const Text(
-                "Already registered? Login here!",
-                style: TextStyle(
-                  color: Colors.white,
+              TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
+                  context
+                      .read<AuthBloc>()
+                      .add(AuthEventRegister(email, password));
+                },
+                style: const ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(
+                    Color.fromARGB(255, 45, 105, 154),
+                  ),
+                ),
+                child: const Text(
+                  "Register",
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
-            )
-          ],
-        ));
+              TextButton(
+                onPressed: () async {
+                  context.read<AuthBloc>().add(const AuthEventLogOut());
+                },
+                style: const ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(
+                    Color.fromARGB(255, 45, 105, 154),
+                  ),
+                ),
+                child: const Text(
+                  "Already registered? Login here!",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              )
+            ],
+          )),
+    );
   }
 }
-

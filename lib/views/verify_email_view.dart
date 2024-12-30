@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mynotesapp/constants/routes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotesapp/services/auth/auth_service.dart';
+import 'package:mynotesapp/services/auth/bloc/auth_bloc.dart';
+import 'package:mynotesapp/services/auth/bloc/auth_event.dart';
 
 class VerifyEmainView extends StatefulWidget {
   const VerifyEmainView({super.key});
@@ -25,10 +27,12 @@ class _VerifyEmainViewState extends State<VerifyEmainView> {
             "We've sent you an email verification. Please open it to verify your account.",
           ),
           const Text(
-              "If you haven't receieved email yet, click 'Send verification email' button below."),
+              "If you haven't receieved email yet, click 'Send verif  ication email' button below."),
           TextButton(
             onPressed: () async {
-              await AuthService.firebase().sendEmailVerification();
+              context
+                  .read<AuthBloc>()
+                  .add(const AuthEventSendEmailVerification());
             },
             style: const ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(
@@ -44,12 +48,8 @@ class _VerifyEmainViewState extends State<VerifyEmainView> {
           ),
           TextButton(
             onPressed: () async {
+              context.read<AuthBloc>().add(const AuthEventLogOut());
               await AuthService.firebase().logOut();
-              if (!context.mounted) return;
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                registerRoute,
-                (route) => false,
-              );
             },
             style: const ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(
