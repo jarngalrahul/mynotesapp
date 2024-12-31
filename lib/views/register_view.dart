@@ -52,60 +52,73 @@ class _RegisterViewState extends State<RegisterView> {
             foregroundColor: Colors.white,
             shadowColor: Colors.amber,
           ),
-          body: Column(
-            children: [
-              TextField(
-                controller: _email,
-                keyboardType: TextInputType.emailAddress,
-                enableSuggestions: true,
-                decoration: const InputDecoration(
-                  hintText: "Enter your email here",
-                ),
-              ),
-              TextField(
-                controller: _password,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-                decoration: const InputDecoration(
-                  hintText: "Enter your password here",
-                ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final email = _email.text;
-                  final password = _password.text;
-                  context
-                      .read<AuthBloc>()
-                      .add(AuthEventRegister(email, password));
-                },
-                style: const ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    Color.fromARGB(255, 45, 105, 154),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Please register to create an account'),
+                TextField(
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  autofocus: true,
+                  enableSuggestions: true,
+                  decoration: const InputDecoration(
+                    hintText: "Enter your email here",
                   ),
                 ),
-                child: const Text(
-                  "Register",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  context.read<AuthBloc>().add(const AuthEventLogOut());
-                },
-                style: const ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    Color.fromARGB(255, 45, 105, 154),
+                TextField(
+                  controller: _password,
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  decoration: const InputDecoration(
+                    hintText: "Enter your password here",
                   ),
                 ),
-                child: const Text(
-                  "Already registered? Login here!",
-                  style: TextStyle(
-                    color: Colors.white,
+                Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () async {
+                          final email = _email.text;
+                          final password = _password.text;
+                          context
+                              .read<AuthBloc>()
+                              .add(AuthEventRegister(email, password));
+                        },
+                        style: const ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Color.fromARGB(255, 45, 105, 154),
+                          ),
+                        ),
+                        child: const Text(
+                          "Register",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          context.read<AuthBloc>().add(const AuthEventLogOut());
+                        },
+                        style: const ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Color.fromARGB(255, 45, 105, 154),
+                          ),
+                        ),
+                        child: const Text(
+                          "Already registered? Login here!",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
-              )
-            ],
+              ],
+            ),
           )),
     );
   }
